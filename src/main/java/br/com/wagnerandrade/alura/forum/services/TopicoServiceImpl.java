@@ -12,6 +12,8 @@ import br.com.wagnerandrade.alura.forum.transport.TopicoDetalhesDTO;
 import br.com.wagnerandrade.alura.forum.transport.requests.TopicoPostRequestDTO;
 import br.com.wagnerandrade.alura.forum.transport.requests.TopicoPutRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,11 @@ public class TopicoServiceImpl implements TopicoService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<TopicoDTO> findAll() {
         return this.topicoRepository.findAll().stream().map(mapper::toTopicoDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<TopicoDTO> pageList(Pageable pageable) {
+        return this.topicoRepository.findAll(pageable).map(this.mapper::toTopicoDTO);
     }
 
     @Override

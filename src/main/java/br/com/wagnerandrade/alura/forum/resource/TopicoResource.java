@@ -5,6 +5,10 @@ import br.com.wagnerandrade.alura.forum.transport.TopicoDTO;
 import br.com.wagnerandrade.alura.forum.transport.requests.TopicoPostRequestDTO;
 import br.com.wagnerandrade.alura.forum.transport.requests.TopicoPutRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,9 +28,14 @@ public class TopicoResource {
         return ResponseEntity.ok().body(this.service.findByIdOrBadRequestException(id));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<TopicoDTO>> lista() {
         return ResponseEntity.ok().body(this.service.findAll());
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TopicoDTO>> pageList(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok().body(this.service.pageList(pageable));
     }
 
     @GetMapping("/curso")

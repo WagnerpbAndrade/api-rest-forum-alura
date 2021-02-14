@@ -5,6 +5,9 @@ import br.com.wagnerandrade.alura.forum.transport.TopicoDTO;
 import br.com.wagnerandrade.alura.forum.transport.requests.TopicoPostRequestDTO;
 import br.com.wagnerandrade.alura.forum.transport.requests.TopicoPutRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/topicos")
 @RequiredArgsConstructor
+@EnableCaching
 public class TopicoResource {
     private final TopicoService service;
 
@@ -34,6 +38,7 @@ public class TopicoResource {
     }
 
     @GetMapping
+    @Cacheable(value = "listDeTopicos")
     public ResponseEntity<Page<TopicoDTO>> pageList(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok().body(this.service.pageList(pageable));
     }
@@ -44,6 +49,7 @@ public class TopicoResource {
     }
 
     @PostMapping
+    @CacheEvict(value = "listDeTopicos", allEntries = true)
     public ResponseEntity<TopicoDTO> post(@RequestBody @Valid TopicoPostRequestDTO topicoPostRequestDTO, UriComponentsBuilder uriBuilder) {
         TopicoDTO topicoDTO = this.service.salvar(topicoPostRequestDTO);
         URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topicoDTO.getId()).toUri();
@@ -51,12 +57,14 @@ public class TopicoResource {
     }
 
     @PutMapping
+    @CacheEvict(value = "listDeTopicos", allEntries = true)
     public ResponseEntity<Void> update(@RequestBody @Valid TopicoPutRequestDTO topicoPutRequestDTO) {
         this.service.update(topicoPutRequestDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "listDeTopicos", allEntries = true)
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         this.service.delete(id);
         return ResponseEntity.noContent().build();

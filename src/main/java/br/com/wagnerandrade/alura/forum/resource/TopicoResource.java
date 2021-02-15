@@ -7,7 +7,6 @@ import br.com.wagnerandrade.alura.forum.transport.requests.TopicoPutRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,7 +22,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/topicos")
 @RequiredArgsConstructor
-@EnableCaching
 public class TopicoResource {
     private final TopicoService service;
 
